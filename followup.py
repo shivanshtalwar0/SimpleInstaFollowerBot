@@ -21,33 +21,24 @@ class webscrapper:
 
         wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "button._0mzm-.sqdOP.L3NKy"))).click()
-        import time
-        time.sleep(2.5)
+
         pass
 
-    def __init__(self, url="", auth=True, email="", password="", chromeversion=73,
-                 platform="linux"):
+    def __init__(self, url="", auth=True, email="", password="",
+                 platform="linux",preview=True,otp_timeout=30):
         self.path = ""
-        self.email=email
-        self.password=password
+        self.email = email
+        self.password = password
 
         if platform == "windows":
-            if chromeversion == 72:
-                self.path = "./chromedriver_win_72.exe"
-            elif chromeversion == 73:
-                self.path = "./chromedriver_win_73.exe"
-            elif chromeversion == 74:
-                self.path = "./chromedriver_win_74.exe"
+            self.path = "./webdrivers/chrome/chromedriver.exe"
         elif platform == "linux":
-            if chromeversion == 72:
-                self.path = "./webdrivers/chrome/chromedriver"
-            elif chromeversion == 73:
-                self.path = "./webdrivers/chrome/chromedriver"
-            elif chromeversion == 74:
-                self.path = "./webdrivers/chrome/chromedriver"
+            self.path = "./webdrivers/chrome/chromedriver"
+        elif platform == "macos":
+            self.path = "./webdrivers/chrome/chromedriver_mac"
 
         self.options = webdriver.ChromeOptions()
-        self.options.headless =True
+        self.options.headless = not preview
         self.options.add_argument('--window-size=1200,1200')
         self.driver = webdriver.Chrome(executable_path=self.path, options=self.options)
 
@@ -60,14 +51,14 @@ class webscrapper:
                 EC.presence_of_element_located((By.NAME, "password"))).send_keys(password)
 
             wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "button._0mzm-.sqdOP.L3NKy"))).click()
+                EC.presence_of_element_located((By.XPATH, "//button[@type='submit' and div='Log In']"))).click()
             import time
-            time.sleep(2.5)
+            print('waiting {} seconds in case it asks for otp'.format(otp_timeout))
+            time.sleep(otp_timeout)
         self.urls = []
 
     def seturls(self, urls):
         self.urls = urls
-
 
     def followbyurl(self):
         for url in self.urls:
@@ -93,10 +84,15 @@ class webscrapper:
                     print("skipping")
 
 
-obj = webscrapper(url="", email="your email",
-                  password="your password", chromeversion=72)
+#_________________________________________ Configuration of script______________________________________________________________________________________
+
+obj = webscrapper(url="", email="youremail@provider.com",
+                  password="yourinstapasswordgoeshere",platform="linux",preview=True,otp_timeout=30)
+# by default it runs on linux but you can change according to your platform chromedriver is updated to latest version 79.0.3945.36
+# by default otp time out is 30 seconds
 
 
+# urls is a list of famous instagram profiles
 urls = ["https://www.instagram.com/amitabhbachchan/",
         "https://www.instagram.com/cristiano/",
         "https://www.instagram.com/selenagomez/",
@@ -167,5 +163,3 @@ urls = ["https://www.instagram.com/amitabhbachchan/",
 obj.seturls(urls)
 for i in range(1000):
     obj.followbyurl()
-    obj.reinitialize()
-    # obj.unfollowbyurl()
