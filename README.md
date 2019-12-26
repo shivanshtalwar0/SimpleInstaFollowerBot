@@ -6,6 +6,13 @@ Enjoy!
 
 **please note:-due to changes in instagram login flow every time you run this bot, you will have to input otp to make it work**
 
+
+# Requirements
+
+only requirement is google chrome should be installed.
+install pip dependencies
+`pip3 install selenium`
+
 # what it does?
 It takes in your instagram credentials, gracefully logs you into your account,then one by one starts following all profiles provided by 
 `urls` list. and if they are already followed by you then it unfollow them back so it can follow them again in next iteration.
